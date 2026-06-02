@@ -1717,10 +1717,34 @@ function cardGlow(el, e) {
 }
 
 // ─── EMAIL VERIFICATION SYSTEM ───
-// Initialize EmailJS
-if(typeof emailjs !== 'undefined') {
-  emailjs.init('acrNNC9ZDEW9wg1ec');
+// Initialize EmailJS with retry logic
+let emailjsReady = false;
+function initEmailJS() {
+  if(typeof emailjs !== 'undefined') {
+    emailjs.init('acrNNC9ZDEW9wg1ec');
+    emailjsReady = true;
+    console.log('EmailJS initialized successfully');
+  } else {
+    console.log('EmailJS library not loaded yet, will retry...');
+  }
 }
+
+// Try to initialize immediately
+initEmailJS();
+
+// Retry initialization after a short delay
+setTimeout(() => {
+  if(!emailjsReady) {
+    initEmailJS();
+  }
+}, 1000);
+
+// Retry one more time after 2 seconds
+setTimeout(() => {
+  if(!emailjsReady) {
+    initEmailJS();
+  }
+}, 2000);
 
 const disposableEmails = [
   'tempmail.com', '10minutemail.com', 'guerrillamail.com', 'mailinator.com',
@@ -1769,13 +1793,14 @@ function sendOTP() {
   btn.textContent = 'Sending...';
   
   // Check if EmailJS is available
-  if(typeof emailjs === 'undefined') {
-    alert('Email service not available. Please check your internet connection.');
+  if(!emailjsReady || typeof emailjs === 'undefined') {
+    alert('Email service is loading. Please try again in a moment.');
     btn.disabled = false;
     btn.textContent = 'Send Verification Code';
+    console.error('EmailJS not ready. emailjsReady:', emailjsReady, 'typeof emailjs:', typeof emailjs);
     return;
   }
-  
+
   // Send OTP email via EmailJS
   emailjs.send('service_jcfd4gr', 'template_6amz9ee', {
     to_email: email,
@@ -1788,18 +1813,18 @@ function sendOTP() {
     document.getElementById('show-email').textContent = email;
     document.getElementById('verify-code').value = '';
     document.getElementById('verify-code').focus();
-    
+
     btn.disabled = false;
     btn.textContent = 'Send Verification Code';
-    
+
     // Start timer
     startOTPTimer();
-    
+
   }).catch((error) => {
-    alert('Error sending OTP. Make sure you created the EmailJS template.\n\nCheck console for details.');
+    console.error('EmailJS error:', error);
+    alert('Error sending OTP:\n\n' + (error.message || 'Unknown error') + '\n\nMake sure your EmailJS template is set up correctly with variables: to_email, otp_code, from_name');
     btn.disabled = false;
     btn.textContent = 'Send Verification Code';
-    console.error('EmailJS error:', error);
   });
 }
 
