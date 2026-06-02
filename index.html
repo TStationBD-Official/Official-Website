@@ -742,6 +742,21 @@ section{position:relative;overflow:hidden}
 }
 .form-input::placeholder{color:rgba(148,163,184,0.4)}
 textarea.form-input{resize:vertical;min-height:120px;font-family:var(--font-body)}
+select.form-input{
+  background:var(--bg-card);
+  cursor:pointer;
+  appearance:none;
+  background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="8" viewBox="0 0 12 8"><path fill="%2394A3B8" d="M1 1l5 5 5-5"/></svg>');
+  background-repeat:no-repeat;
+  background-position:right 1.1rem center;
+  padding-right:2.5rem;
+}
+select.form-input:hover{border-color:rgba(244,185,66,0.3);background-color:rgba(15,20,40,1)}
+select.form-input option{
+  background:var(--bg-card);
+  color:var(--text);
+  padding:0.75rem;
+}
 .form-submit{
   width:100%;background:linear-gradient(135deg,var(--primary),var(--primary-dark));
   color:#000;border:none;cursor:pointer;
