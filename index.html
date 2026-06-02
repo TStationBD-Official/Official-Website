@@ -12,7 +12,56 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
 <script src="https://upload-widget.cloudinary.com/latest/cwt.js" type="text/javascript"></script>
-<script type="text/javascript" src="https://unpkg.com/@emailjs/browser@4/dist/index.min.js"></script>
+<script>
+// Multi-CDN EmailJS loader with fallbacks
+function loadEmailJSScript() {
+  const cdns = [
+    'https://unpkg.com/@emailjs/browser@4/dist/index.min.js',
+    'https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/index.min.js',
+    'https://cdnjs.cloudflare.com/ajax/libs/emailjs/3.10.0/email.min.js'
+  ];
+
+  function loadFromCDN(url) {
+    return new Promise((resolve, reject) => {
+      const script = document.createElement('script');
+      script.src = url;
+      script.type = 'text/javascript';
+      script.timeout = 10000;
+
+      script.onload = () => {
+        console.log('EmailJS loaded from:', url);
+        resolve(true);
+      };
+
+      script.onerror = () => {
+        console.warn('Failed to load from:', url);
+        reject(new Error(`CDN failed: ${url}`));
+      };
+
+      document.head.appendChild(script);
+    });
+  }
+
+  return (async function tryLoadCDNs() {
+    for(let i = 0; i < cdns.length; i++) {
+      try {
+        await loadFromCDN(cdns[i]);
+        return true;
+      } catch(e) {
+        console.log(`CDN ${i + 1}/${cdns.length} failed, trying next...`);
+        if(i === cdns.length - 1) {
+          throw new Error('All CDNs failed to load EmailJS');
+        }
+      }
+    }
+  })();
+}
+
+// Load immediately
+loadEmailJSScript().catch(err => {
+  console.error('EmailJS loading error:', err);
+});
+</script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -1720,7 +1769,7 @@ function cardGlow(el, e) {
 // Initialize EmailJS on demand with retry
 async function ensureEmailJSReady() {
   let retries = 0;
-  const maxRetries = 5;
+  const maxRetries = 8;
 
   while(retries < maxRetries) {
     if(typeof emailjs !== 'undefined') {
@@ -1732,17 +1781,19 @@ async function ensureEmailJSReady() {
         console.log('EmailJS init error:', e);
         retries++;
         if(retries < maxRetries) {
-          await new Promise(resolve => setTimeout(resolve, 500));
+          await new Promise(resolve => setTimeout(resolve, 750));
         }
       }
     } else {
+      console.log('EmailJS not yet available, retrying... (' + (retries + 1) + '/' + maxRetries + ')');
       retries++;
       if(retries < maxRetries) {
-        await new Promise(resolve => setTimeout(resolve, 500));
+        await new Promise(resolve => setTimeout(resolve, 750));
       }
     }
   }
 
+  console.error('EmailJS failed to initialize after', maxRetries, 'attempts');
   return false;
 }
 
@@ -1794,19 +1845,27 @@ async function sendOTP() {
 
   try {
     // Ensure EmailJS is ready
+    btn.textContent = 'Loading service...';
     const ready = await ensureEmailJSReady();
+
     if(!ready) {
-      throw new Error('EmailJS library failed to load after multiple retries');
+      throw new Error('EmailJS library failed to load after multiple retries. Please check:\n1. Your internet connection\n2. Try disabling ad/script blockers\n3. Refresh the page and try again');
     }
 
     btn.textContent = 'Sending...';
 
-    // Send OTP email via EmailJS
-    await emailjs.send('service_jcfd4gr', 'template_6amz9ee', {
+    // Send OTP email via EmailJS with timeout
+    const sendPromise = emailjs.send('service_jcfd4gr', 'template_6amz9ee', {
       to_email: email,
       otp_code: generatedOTP,
       from_name: 'TStationBD'
     });
+
+    const timeoutPromise = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('Request timeout - please check your internet connection')), 15000)
+    );
+
+    await Promise.race([sendPromise, timeoutPromise]);
 
     // Show OTP step
     document.getElementById('email-step').style.display = 'none';
@@ -1823,7 +1882,19 @@ async function sendOTP() {
 
   } catch(error) {
     console.error('OTP Error:', error);
-    alert('Error: ' + (error.message || 'Failed to send OTP') + '\n\nPlease check:\n1. Your internet connection\n2. Your EmailJS credentials are correct\n3. Your email template variables are: to_email, otp_code, from_name');
+    let errorMsg = 'Failed to send OTP. ';
+
+    if(error.message.includes('timeout')) {
+      errorMsg += 'Request timed out - check your internet connection.';
+    } else if(error.message.includes('load')) {
+      errorMsg += 'EmailJS failed to load. Try refreshing the page.';
+    } else if(error.message && error.message.length > 0) {
+      errorMsg += error.message;
+    } else {
+      errorMsg += 'Unknown error occurred.';
+    }
+
+    alert(errorMsg + '\n\nDebug info: Check console (F12) for more details.');
     btn.disabled = false;
     btn.textContent = 'Send Verification Code';
   }
