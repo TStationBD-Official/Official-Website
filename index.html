@@ -1252,12 +1252,13 @@ footer::before{
   </div>
 </div>
 
-<!-- EMAIL VERIFICATION MODAL -->
+<!-- EMAIL VERIFICATION MODAL - COMMENTED OUT -->
+<!--
 <div id="email-verification-modal" style="display:none;position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,0.9);backdrop-filter:blur(5px);align-items:center;justify-content:center;padding:2rem 5%">
   <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:24px;padding:3rem;max-width:500px;width:100%;animation:slide-up 0.4s cubic-bezier(0.22,1,0.36,1)">
     <h2 style="font-family:var(--font-display);font-size:1.8rem;font-weight:800;margin-bottom:0.5rem;color:var(--text)">Verify Your Email</h2>
     <p style="color:var(--muted);font-size:0.95rem;line-height:1.6;margin-bottom:2rem">We send a verification code to ensure quality inquiries only.</p>
-    
+
     <div id="email-step" style="display:block">
       <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:1.5rem">
         <label style="font-size:0.8rem;color:var(--muted);font-weight:500;letter-spacing:0.03em;text-transform:uppercase">Email Address</label>
@@ -1286,6 +1287,7 @@ footer::before{
     </div>
   </div>
 </div>
+-->
 
 <div class="service-modal" id="consulting-modal">
   <div class="modal-content">
@@ -2086,11 +2088,11 @@ function handleServiceCTA() {
 document.getElementById('contact-form').addEventListener('submit', async (e) => {
   e.preventDefault();
 
-  // Check if email is verified first
-  if(!isEmailVerified) {
-    openEmailVerification();
-    return;
-  }
+  // EMAIL VERIFICATION DISABLED - Commented out
+  // if(!isEmailVerified) {
+  //   openEmailVerification();
+  //   return;
+  // }
 
   const btn = document.getElementById('submit-btn');
   const statusDiv = document.getElementById('form-status');
