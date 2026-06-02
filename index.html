@@ -1717,34 +1717,34 @@ function cardGlow(el, e) {
 }
 
 // ─── EMAIL VERIFICATION SYSTEM ───
-// Initialize EmailJS with retry logic
-let emailjsReady = false;
-function initEmailJS() {
-  if(typeof emailjs !== 'undefined') {
-    emailjs.init('acrNNC9ZDEW9wg1ec');
-    emailjsReady = true;
-    console.log('EmailJS initialized successfully');
-  } else {
-    console.log('EmailJS library not loaded yet, will retry...');
+// Initialize EmailJS on demand with retry
+async function ensureEmailJSReady() {
+  let retries = 0;
+  const maxRetries = 5;
+
+  while(retries < maxRetries) {
+    if(typeof emailjs !== 'undefined') {
+      try {
+        emailjs.init('acrNNC9ZDEW9wg1ec');
+        console.log('EmailJS initialized successfully');
+        return true;
+      } catch(e) {
+        console.log('EmailJS init error:', e);
+        retries++;
+        if(retries < maxRetries) {
+          await new Promise(resolve => setTimeout(resolve, 500));
+        }
+      }
+    } else {
+      retries++;
+      if(retries < maxRetries) {
+        await new Promise(resolve => setTimeout(resolve, 500));
+      }
+    }
   }
+
+  return false;
 }
-
-// Try to initialize immediately
-initEmailJS();
-
-// Retry initialization after a short delay
-setTimeout(() => {
-  if(!emailjsReady) {
-    initEmailJS();
-  }
-}, 1000);
-
-// Retry one more time after 2 seconds
-setTimeout(() => {
-  if(!emailjsReady) {
-    initEmailJS();
-  }
-}, 2000);
 
 const disposableEmails = [
   'tempmail.com', '10minutemail.com', 'guerrillamail.com', 'mailinator.com',
@@ -1766,47 +1766,48 @@ function generateOTP() {
   return Math.floor(100000 + Math.random() * 900000).toString();
 }
 
-function sendOTP() {
+async function sendOTP() {
   const email = document.getElementById('verify-email').value.trim();
-  
+
   if(!email) {
     alert('Please enter your email');
     return;
   }
-  
+
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if(!emailRegex.test(email)) {
     alert('Invalid email address');
     return;
   }
-  
+
   if(isDisposableEmail(email)) {
     alert('Disposable emails are not allowed. Please use a real email.');
     return;
   }
-  
+
   generatedOTP = generateOTP();
   otpTime = new Date(Date.now() + 10 * 60 * 1000);
-  
+
   const btn = document.getElementById('send-otp-btn');
   btn.disabled = true;
-  btn.textContent = 'Sending...';
-  
-  // Check if EmailJS is available
-  if(!emailjsReady || typeof emailjs === 'undefined') {
-    alert('Email service is loading. Please try again in a moment.');
-    btn.disabled = false;
-    btn.textContent = 'Send Verification Code';
-    console.error('EmailJS not ready. emailjsReady:', emailjsReady, 'typeof emailjs:', typeof emailjs);
-    return;
-  }
+  btn.textContent = 'Initializing...';
 
-  // Send OTP email via EmailJS
-  emailjs.send('service_jcfd4gr', 'template_6amz9ee', {
-    to_email: email,
-    otp_code: generatedOTP,
-    from_name: 'TStationBD'
-  }).then(() => {
+  try {
+    // Ensure EmailJS is ready
+    const ready = await ensureEmailJSReady();
+    if(!ready) {
+      throw new Error('EmailJS library failed to load after multiple retries');
+    }
+
+    btn.textContent = 'Sending...';
+
+    // Send OTP email via EmailJS
+    await emailjs.send('service_jcfd4gr', 'template_6amz9ee', {
+      to_email: email,
+      otp_code: generatedOTP,
+      from_name: 'TStationBD'
+    });
+
     // Show OTP step
     document.getElementById('email-step').style.display = 'none';
     document.getElementById('otp-step').style.display = 'block';
@@ -1820,12 +1821,12 @@ function sendOTP() {
     // Start timer
     startOTPTimer();
 
-  }).catch((error) => {
-    console.error('EmailJS error:', error);
-    alert('Error sending OTP:\n\n' + (error.message || 'Unknown error') + '\n\nMake sure your EmailJS template is set up correctly with variables: to_email, otp_code, from_name');
+  } catch(error) {
+    console.error('OTP Error:', error);
+    alert('Error: ' + (error.message || 'Failed to send OTP') + '\n\nPlease check:\n1. Your internet connection\n2. Your EmailJS credentials are correct\n3. Your email template variables are: to_email, otp_code, from_name');
     btn.disabled = false;
     btn.textContent = 'Send Verification Code';
-  });
+  }
 }
 
 function startOTPTimer() {
