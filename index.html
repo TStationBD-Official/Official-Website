@@ -4,9 +4,10 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>TStationBD — App & Web Development Excellence</title>
+<link rel="icon" type="image/png" href="images/logo.png">
 <meta name="description" content="TStationBD builds award-winning mobile apps and web solutions. Join 50K+ users across our flagship applications."/>
 <meta property="og:title" content="TStationBD — App & Web Development"/>
-<meta property="og:description" content="Creators of Tuition Master, Finance Axis, NotifiQo, and My Mosque Finder."/>
+<meta property="og:description" content="Creators of Tuition Core, Finance Axis, Notifiqo, and My Mosque Finder."/>
 <meta property="og:type" content="website"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
@@ -557,46 +558,78 @@ section{position:relative;overflow:hidden}
 .viz-bar{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--primary),var(--accent))}
 
 /* ─── PORTFOLIO ─── */
-#portfolio{padding:7rem 5%}
+#portfolio{padding:7rem 5%;position:relative}
 .portfolio-header{margin-bottom:4rem}
 .portfolio-grid{
   max-width:1280px;margin:0 auto;
-  display:grid;grid-template-columns:repeat(3,1fr);gap:1.5px;
-  background:var(--border);border-radius:20px;overflow:hidden;
-  border:1px solid var(--border);
+  display:grid;grid-template-columns:repeat(3,1fr);gap:2rem;
 }
 .portfolio-card{
   background:var(--bg-card);padding:2.5rem;
   position:relative;overflow:hidden;
-  transition:background 0.4s;
   cursor:pointer;
   aspect-ratio:1/1;
   display:flex;flex-direction:column;justify-content:flex-end;
+  border:1px solid var(--border);
+  border-radius:20px;
+  transition:all 0.4s cubic-bezier(0.22,1,0.36,1);
 }
+.portfolio-card::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(circle at 50% 50%,rgba(244,185,66,0.1),transparent 70%);
+  opacity:0;transition:opacity 0.4s;
+  pointer-events:none;
+  border-radius:20px;
+}
+.portfolio-card:hover{
+  border-color:rgba(244,185,66,0.3);
+  transform:translateY(-8px);
+  box-shadow:0 20px 60px rgba(244,185,66,0.2);
+}
+.portfolio-card:hover::before{opacity:1}
 .portfolio-bg{
   position:absolute;inset:0;
-  border-radius:0;
-  opacity:0.7;transition:opacity 0.4s,transform 0.6s;
+  border-radius:20px;
+  opacity:0.6;transition:opacity 0.5s,transform 0.8s cubic-bezier(0.22,1,0.36,1);
 }
-.portfolio-card:hover .portfolio-bg{opacity:0.9;transform:scale(1.05)}
+.portfolio-card:hover .portfolio-bg{opacity:0.85;transform:scale(1.08) rotate(2deg)}
 .portfolio-overlay{
   position:absolute;inset:0;
-  background:linear-gradient(0deg,rgba(5,8,22,0.9) 30%,transparent 100%);
+  background:linear-gradient(135deg,rgba(5,8,22,0.95) 0%,rgba(5,8,22,0.7) 50%,transparent 100%);
+  border-radius:20px;
+  transition:all 0.5s;
 }
-.portfolio-content{position:relative;z-index:1}
-.portfolio-tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:0.75rem}
+.portfolio-card:hover .portfolio-overlay{background:linear-gradient(135deg,rgba(5,8,22,0.85) 0%,rgba(5,8,22,0.5) 50%,transparent 100%)}
+.portfolio-content{position:relative;z-index:1;transition:transform 0.4s cubic-bezier(0.22,1,0.36,1)}
+.portfolio-card:hover .portfolio-content{transform:translateY(-8px)}
+.portfolio-tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:0.75rem;transition:all 0.4s}
 .tag{
-  background:rgba(255,255,255,0.1);
-  color:var(--text);font-size:0.7rem;
-  padding:0.2rem 0.55rem;border-radius:5px;
-  backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.1);
-  font-weight:500;
+  background:rgba(244,185,66,0.15);
+  color:var(--primary);font-size:0.7rem;
+  padding:0.3rem 0.7rem;border-radius:6px;
+  backdrop-filter:blur(10px);border:1px solid rgba(244,185,66,0.3);
+  font-weight:600;letter-spacing:0.03em;
+  transition:all 0.3s;
+}
+.portfolio-card:hover .tag{
+  background:rgba(244,185,66,0.25);
+  border-color:rgba(244,185,66,0.5);
+  transform:translateY(-2px);
 }
 .portfolio-name{
-  font-family:var(--font-display);font-size:1.25rem;font-weight:700;
-  margin-bottom:0.4rem;
+  font-family:var(--font-display);font-size:1.35rem;font-weight:800;
+  margin-bottom:0.5rem;
+  transition:all 0.3s cubic-bezier(0.22,1,0.36,1);
+  background:linear-gradient(135deg,var(--text),var(--muted));
+  background-clip:text;-webkit-background-clip:text;-webkit-text-fill-color:transparent;
 }
-.portfolio-sub{color:var(--muted);font-size:0.82rem}
+.portfolio-card:hover .portfolio-name{
+  -webkit-text-fill-color:unset;
+  color:var(--primary);
+  text-shadow:0 0 20px rgba(244,185,66,0.3);
+}
+.portfolio-sub{color:var(--muted);font-size:0.85rem;line-height:1.6;transition:color 0.3s}
+.portfolio-card:hover .portfolio-sub{color:rgba(248,250,252,0.8)}
 
 /* ─── TESTIMONIALS ─── */
 #testimonials{padding:7rem 5%;overflow:hidden}
@@ -860,7 +893,7 @@ footer::before{
   .services-grid{grid-template-columns:repeat(2,1fr)}
   .feature-row{grid-template-columns:1fr;gap:2.5rem}
   .feature-row.reverse{direction:ltr}
-  .portfolio-grid{grid-template-columns:repeat(2,1fr)}
+  .portfolio-grid{grid-template-columns:repeat(2,1fr);gap:1.5rem}
   .about-inner{grid-template-columns:1fr;gap:3rem}
   .footer-top{grid-template-columns:1fr 1fr;gap:2.5rem}
 }
@@ -868,7 +901,7 @@ footer::before{
   .nav-links,.nav-cta{display:none}
   .hamburger{display:flex}
   .services-grid{grid-template-columns:1fr}
-  .portfolio-grid{grid-template-columns:1fr}
+  .portfolio-grid{grid-template-columns:1fr;gap:1rem}
   .form-row{grid-template-columns:1fr}
   .stats-grid{grid-template-columns:1fr 1fr}
   .hero-title{font-size:2.5rem}
@@ -893,7 +926,7 @@ footer::before{
 <nav id="navbar">
   <div class="nav-inner">
     <a class="nav-logo" href="#">
-      <div class="logo-mark">T</div>
+      <img src="images/logo.png" alt="TStationBD Logo" style="width:36px;height:36px;border-radius:10px;flex-shrink:0;box-shadow:0 0 20px rgba(244,185,66,0.4)"/>
       TStationBD
     </a>
     <ul class="nav-links">
@@ -941,7 +974,7 @@ footer::before{
       </h1>
 
       <p class="hero-desc reveal reveal-delay-2">
-        TStationBD creates award-winning mobile apps and web solutions. From Tuition Master to Finance Axis — we deliver digital products trusted by 100+ users.
+        TStationBD creates award-winning mobile apps and web solutions. From Tuition Core to Finance Axis — we deliver digital products trusted by 100+ users.
       </p>
 
       <div class="hero-actions reveal reveal-delay-3">
@@ -1061,7 +1094,7 @@ footer::before{
     <div class="service-card reveal reveal-delay-1" onclick="openServiceModal('mobile')">
       <div class="service-icon" style="background:rgba(244,185,66,0.15)">📱</div>
       <div class="service-name">Mobile Apps</div>
-      <p class="service-desc">Award-winning iOS & Android apps using Flutter. Featured apps like Tuition Master, Finance Axis, & Notifiqo powering 100+ users.</p>
+      <p class="service-desc">Award-winning iOS & Android apps using Flutter. Featured apps like Tuition Core, Finance Axis, & Notifiqo powering 100+ users.</p>
       <div class="service-arrow">Learn more <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6h8M7 3l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>
     </div>
     <div class="service-card reveal reveal-delay-2" onclick="openServiceModal('uiux')">
@@ -1142,7 +1175,7 @@ footer::before{
         <li><div class="modal-feature-check">✓</div><span>App Store & Google Play optimization</span></li>
         <li><div class="modal-feature-check">✓</div><span>Real-time features with Firebase</span></li>
         <li><div class="modal-feature-check">✓</div><span>Offline-first architecture</span></li>
-        <li><div class="modal-feature-check">✓</div><span>Featured apps: Tuition Master, Finance Axis, Notifiqo</span></li>
+        <li><div class="modal-feature-check">✓</div><span>Featured apps: Tuition Core, Finance Axis, Notifiqo</span></li>
       </ul>
     </div>
 
@@ -1456,28 +1489,28 @@ footer::before{
   </div>
   <div class="portfolio-grid">
     <a href="https://play.google.com/store/apps/details?id=com.tstation.tuition_master" target="_blank" class="portfolio-card reveal" style="text-decoration:none;cursor:pointer">
-      <div class="portfolio-bg" style="background:linear-gradient(135deg,#1a1a3e,#F4B942 60%,#FFD700)"></div>
+      <div class="portfolio-bg" style="background:url('images/tuitioncore.png') center/cover;opacity:0.7"></div>
       <div class="portfolio-overlay"></div>
       <div class="portfolio-content">
-        <div class="portfolio-tags"><span class="tag">React Native</span><span class="tag">Education</span><span class="tag">Mobile</span></div>
-        <div class="portfolio-name">Tuition Master</div>
+        <div class="portfolio-tags"><span class="tag">Flutter</span><span class="tag">Firebase</span><span class="tag">Mobile</span></div>
+        <div class="portfolio-name">Tuition Core</div>
         <div class="portfolio-sub">Learning platform connecting tutors & students</div>
       </div>
     </a>
     <a href="https://play.google.com/store/apps/details?id=com.tstationbd.financeaxis" target="_blank" class="portfolio-card reveal reveal-delay-1" style="text-decoration:none;cursor:pointer">
-      <div class="portfolio-bg" style="background:linear-gradient(135deg,#0a1a20,#06B6D4 80%,#38BDF8)"></div>
+      <div class="portfolio-bg" style="background:url('images/financeaxis.png') center/cover;opacity:0.7"></div>
       <div class="portfolio-overlay"></div>
       <div class="portfolio-content">
-        <div class="portfolio-tags"><span class="tag">Fintech</span><span class="tag">Mobile</span><span class="tag">Financial</span></div>
+        <div class="portfolio-tags"><span class="tag">Flutter</span><span class="tag">Firebase</span><span class="tag">Fintech</span></div>
         <div class="portfolio-name">Finance Axis</div>
         <div class="portfolio-sub">Smart personal finance & investment management</div>
       </div>
     </a>
     <a href="https://play.google.com/store/apps/details?id=com.tstationbd.notifiqo" target="_blank" class="portfolio-card reveal reveal-delay-2" style="text-decoration:none;cursor:pointer">
-      <div class="portfolio-bg" style="background:linear-gradient(135deg,#1a0a2e,#EC4899 70%,#F472B6)"></div>
+      <div class="portfolio-bg" style="background:url('images/notifiqo.png') center/cover;opacity:0.7"></div>
       <div class="portfolio-overlay"></div>
       <div class="portfolio-content">
-        <div class="portfolio-tags"><span class="tag">Notifications</span><span class="tag">Mobile</span><span class="tag">Messaging</span></div>
+        <div class="portfolio-tags"><span class="tag">Flutter</span><span class="tag">Firebase</span><span class="tag">Notifications</span></div>
         <div class="portfolio-name">Notifiqo</div>
         <div class="portfolio-sub">Smart notification management & personalization</div>
       </div>
@@ -1524,7 +1557,7 @@ footer::before{
         Founded in Dhaka, Bangladesh — TStationBD is a boutique digital engineering studio built by engineers who were tired of mediocre software. We believe every pixel, every API endpoint, and every deployment should be a work of craft.
       </p>
       <div class="about-highlight reveal reveal-delay-3">
-        "We've built 4 mobile apps with 100K+ combined users. That's not luck — it's obsessive attention to quality, user feedback, and continuous improvement."
+        "We've built stunning Flutter & Firebase apps with 100K+ combined users. That's not luck — it's obsessive attention to quality, user feedback, and continuous improvement."
       </div>
       <div class="tech-stack-title reveal reveal-delay-4">Core Technology Stack</div>
       <div class="tech-stack reveal reveal-delay-5">
@@ -1662,7 +1695,7 @@ footer::before{
     <div class="footer-top">
       <div class="footer-brand">
         <a class="nav-logo" href="#">
-          <div class="logo-mark">T</div>
+          <img src="images/logo.png" alt="TStationBD Logo" style="width:36px;height:36px;border-radius:10px;flex-shrink:0;box-shadow:0 0 20px rgba(244,185,66,0.4)"/>
           TStationBD
         </a>
         <p class="footer-desc">Elite digital engineering studio based in Dhaka. We build products that define the future.</p>
