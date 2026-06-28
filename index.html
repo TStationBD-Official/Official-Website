@@ -2198,44 +2198,228 @@ window.addEventListener('load', () => {
 <!-- Monetag In-Page Push -->
 <script>(function(s){s.dataset.zone='11211241',s.src='https://nap5k.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
 
-<!-- Monetag Direct Link Zones -->
+<!-- Monetag Direct Link Zones — CTA onclick triggers -->
 <script>
 (function() {
-  const zones = {
-    primary:   'https://omg10.com/4/11211141', // Primary CTAs
-    portfolio: 'https://omg10.com/4/11211143', // Portfolio / Work section
-    general:   'https://omg10.com/4/11211144'  // Footer / Social / General
-  };
-
-  const COOLDOWN = 3 * 60 * 1000; // 3 minutes between openings per zone
+  const zones = [
+    'https://omg10.com/4/11211141',
+    'https://omg10.com/4/11211143',
+    'https://omg10.com/4/11211144'
+  ];
+  const COOLDOWN = 3 * 60 * 1000;
   const lastOpened = {};
 
-  function tryOpen(zoneKey) {
+  function tryOpen(zone) {
     const now = Date.now();
-    if (!lastOpened[zoneKey] || now - lastOpened[zoneKey] > COOLDOWN) {
-      window.open(zones[zoneKey], '_blank', 'noopener,noreferrer');
-      lastOpened[zoneKey] = now;
+    if (!lastOpened[zone] || now - lastOpened[zone] > COOLDOWN) {
+      window.open(zone, '_blank', 'noopener,noreferrer');
+      lastOpened[zone] = now;
     }
   }
 
   document.addEventListener('DOMContentLoaded', function() {
-
-    // Zone 1 — Primary CTAs: "Start a Project", "Get Started", modal CTAs, form submit
     document.querySelectorAll('.btn-primary, .nav-cta, .modal-cta, .form-submit').forEach(function(el) {
-      el.addEventListener('click', function() { tryOpen('primary'); });
+      el.addEventListener('click', function() { tryOpen(zones[0]); });
     });
-
-    // Zone 2 — Portfolio cards & "View Our Work" button
     document.querySelectorAll('.portfolio-card, .btn-secondary').forEach(function(el) {
-      el.addEventListener('click', function() { tryOpen('portfolio'); });
+      el.addEventListener('click', function() { tryOpen(zones[1]); });
     });
-
-    // Zone 3 — Footer social links & footer column links
     document.querySelectorAll('.social-link, .footer-col a').forEach(function(el) {
-      el.addEventListener('click', function() { tryOpen('general'); });
+      el.addEventListener('click', function() { tryOpen(zones[2]); });
     });
-
   });
+})();
+</script>
+
+<!-- Monetag Fixed Ad Banners (Bottom Bar + Side Badge) -->
+<style>
+/* ── Bottom Sticky Bar ── */
+#mtag-bar {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 9999;
+  background: linear-gradient(135deg, #0B1120, #0f1a30);
+  border-top: 1px solid rgba(244,185,66,0.35);
+  padding: 10px 16px;
+  display: flex; align-items: center; justify-content: space-between;
+  box-shadow: 0 -4px 30px rgba(0,0,0,0.5);
+  transition: transform 0.4s ease;
+}
+#mtag-bar.hidden { transform: translateY(100%); }
+#mtag-bar-slides { flex: 1; overflow: hidden; height: 40px; position: relative; }
+.mtag-slide {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; gap: 12px;
+  opacity: 0; transform: translateY(12px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  pointer-events: none;
+}
+.mtag-slide.active {
+  opacity: 1; transform: translateY(0);
+  pointer-events: auto;
+}
+.mtag-slide-icon { font-size: 1.2rem; flex-shrink: 0; }
+.mtag-slide-text {
+  color: #CBD5E1; font-size: 0.85rem; font-family: 'Inter', sans-serif;
+  flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.mtag-slide-text strong { color: #F4B942; }
+.mtag-slide-btn {
+  background: linear-gradient(135deg, #F4B942, #E8A028);
+  color: #000; border: none; cursor: pointer;
+  padding: 6px 16px; border-radius: 7px;
+  font-size: 0.8rem; font-weight: 700; font-family: 'Inter', sans-serif;
+  white-space: nowrap; flex-shrink: 0;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.mtag-slide-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 15px rgba(244,185,66,0.5); }
+#mtag-bar-close {
+  background: none; border: none; color: #64748B; cursor: pointer;
+  font-size: 1.1rem; padding: 4px 6px; margin-left: 12px; flex-shrink: 0;
+  transition: color 0.2s;
+}
+#mtag-bar-close:hover { color: #94A3B8; }
+
+/* ── Side Badge ── */
+#mtag-side {
+  position: fixed; right: 0; top: 50%; transform: translateY(-50%);
+  z-index: 9998; display: flex; flex-direction: column; align-items: flex-end;
+}
+#mtag-side-tab {
+  writing-mode: vertical-rl; text-orientation: mixed;
+  background: linear-gradient(180deg, #F4B942, #E8A028);
+  color: #000; font-size: 0.7rem; font-weight: 700; font-family: 'Inter', sans-serif;
+  padding: 14px 6px; cursor: pointer; border-radius: 8px 0 0 8px;
+  letter-spacing: 0.05em; box-shadow: -2px 0 20px rgba(244,185,66,0.3);
+  transition: padding 0.2s;
+}
+#mtag-side-tab:hover { padding: 14px 10px; }
+#mtag-side-panel {
+  position: absolute; right: 0; top: 0;
+  width: 180px; background: #0B1120;
+  border: 1px solid rgba(244,185,66,0.3); border-right: none;
+  border-radius: 12px 0 0 12px;
+  padding: 14px; overflow: hidden;
+  max-height: 0; opacity: 0;
+  transition: max-height 0.4s ease, opacity 0.4s ease, padding 0.4s ease;
+  padding-top: 0; padding-bottom: 0;
+}
+#mtag-side-panel.open {
+  max-height: 200px; opacity: 1;
+  padding: 14px; padding-right: 4px;
+}
+.mtag-side-slide { display: none; }
+.mtag-side-slide.active { display: block; }
+.mtag-side-emoji { font-size: 1.5rem; text-align: center; margin-bottom: 6px; }
+.mtag-side-text {
+  color: #94A3B8; font-size: 0.75rem; line-height: 1.5;
+  font-family: 'Inter', sans-serif; margin-bottom: 10px; text-align: center;
+}
+.mtag-side-text strong { color: #F4B942; }
+.mtag-side-btn {
+  width: 100%; background: linear-gradient(135deg, #F4B942, #E8A028);
+  color: #000; border: none; cursor: pointer;
+  padding: 7px; border-radius: 7px;
+  font-size: 0.75rem; font-weight: 700; font-family: 'Inter', sans-serif;
+}
+
+@media (max-width: 480px) {
+  #mtag-side { display: none; }
+  .mtag-slide-text { font-size: 0.75rem; }
+}
+</style>
+
+<!-- Bottom Sticky Bar -->
+<div id="mtag-bar">
+  <div id="mtag-bar-slides">
+    <div class="mtag-slide active" data-zone="https://omg10.com/4/11211141">
+      <span class="mtag-slide-icon">🔥</span>
+      <span class="mtag-slide-text"><strong>Hot Deal:</strong> Exclusive offers handpicked for you — grab it before it's gone!</span>
+      <button class="mtag-slide-btn" onclick="mtagOpen('https://omg10.com/4/11211141')">Claim Now →</button>
+    </div>
+    <div class="mtag-slide" data-zone="https://omg10.com/4/11211143">
+      <span class="mtag-slide-icon">💰</span>
+      <span class="mtag-slide-text"><strong>Earn Online:</strong> Top earning opportunities available — start today for free!</span>
+      <button class="mtag-slide-btn" onclick="mtagOpen('https://omg10.com/4/11211143')">Learn More →</button>
+    </div>
+    <div class="mtag-slide" data-zone="https://omg10.com/4/11211144">
+      <span class="mtag-slide-icon">⚡</span>
+      <span class="mtag-slide-text"><strong>Special Offer:</strong> Limited time deal just for visitors — don't miss out!</span>
+      <button class="mtag-slide-btn" onclick="mtagOpen('https://omg10.com/4/11211144')">See Offer →</button>
+    </div>
+  </div>
+  <button id="mtag-bar-close" title="Close">✕</button>
+</div>
+
+<!-- Side Badge -->
+<div id="mtag-side">
+  <div id="mtag-side-panel">
+    <div class="mtag-side-slide active">
+      <div class="mtag-side-emoji">🎁</div>
+      <div class="mtag-side-text"><strong>Free Gift</strong> waiting for you — claim your reward now!</div>
+      <button class="mtag-side-btn" onclick="mtagOpen('https://omg10.com/4/11211141')">Get It →</button>
+    </div>
+    <div class="mtag-side-slide">
+      <div class="mtag-side-emoji">📈</div>
+      <div class="mtag-side-text"><strong>Grow your income</strong> with top-rated online programs!</div>
+      <button class="mtag-side-btn" onclick="mtagOpen('https://omg10.com/4/11211143')">Explore →</button>
+    </div>
+    <div class="mtag-side-slide">
+      <div class="mtag-side-emoji">🛍️</div>
+      <div class="mtag-side-text"><strong>Flash Sale</strong> — best deals ending soon, grab yours!</div>
+      <button class="mtag-side-btn" onclick="mtagOpen('https://omg10.com/4/11211144')">Shop Now →</button>
+    </div>
+  </div>
+  <div id="mtag-side-tab" onclick="mtagToggleSide()">ADS</div>
+</div>
+
+<script>
+(function() {
+  function mtagOpen(url) {
+    window.open(url, '_blank', 'noopener,noreferrer');
+  }
+  window.mtagOpen = mtagOpen;
+
+  // ── Bottom bar rotation ──
+  var barSlides = document.querySelectorAll('#mtag-bar-slides .mtag-slide');
+  var barIdx = 0;
+  function rotateBannerBar() {
+    barSlides[barIdx].classList.remove('active');
+    barIdx = (barIdx + 1) % barSlides.length;
+    barSlides[barIdx].classList.add('active');
+  }
+  setInterval(rotateBannerBar, 5000);
+
+  // Close button
+  document.getElementById('mtag-bar-close').addEventListener('click', function() {
+    document.getElementById('mtag-bar').classList.add('hidden');
+    // Reopen after 2 minutes
+    setTimeout(function() {
+      document.getElementById('mtag-bar').classList.remove('hidden');
+    }, 2 * 60 * 1000);
+  });
+
+  // ── Side panel rotation ──
+  var sideSlides = document.querySelectorAll('.mtag-side-slide');
+  var sideIdx = 0;
+  function rotateSide() {
+    sideSlides[sideIdx].classList.remove('active');
+    sideIdx = (sideIdx + 1) % sideSlides.length;
+    sideSlides[sideIdx].classList.add('active');
+  }
+  setInterval(rotateSide, 5000);
+
+  // Side panel toggle
+  var sidePanelOpen = false;
+  function mtagToggleSide() {
+    sidePanelOpen = !sidePanelOpen;
+    document.getElementById('mtag-side-panel').classList.toggle('open', sidePanelOpen);
+  }
+  window.mtagToggleSide = mtagToggleSide;
+
+  // Auto-open side panel after 8 seconds
+  setTimeout(function() {
+    sidePanelOpen = true;
+    document.getElementById('mtag-side-panel').classList.add('open');
+  }, 8000);
 })();
 </script>
 </body>
