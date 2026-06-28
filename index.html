@@ -2231,116 +2231,201 @@ window.addEventListener('load', () => {
 })();
 </script>
 
-<!-- Monetag Fixed Ad Banners (Bottom Bar + Side Badge) -->
+<!-- Monetag Fixed Ad Banners -->
 <style>
+/* ── AD Chip ── */
+.mtag-ad-chip {
+  display: inline-block;
+  background: rgba(244,185,66,0.15);
+  border: 1px solid rgba(244,185,66,0.4);
+  color: #F4B942;
+  font-size: 0.55rem; font-weight: 800;
+  padding: 1px 5px; border-radius: 4px;
+  letter-spacing: 0.08em; flex-shrink: 0;
+  font-family: 'Inter', sans-serif;
+  vertical-align: middle;
+}
+
 /* ── Bottom Sticky Bar ── */
 #mtag-bar {
   position: fixed; bottom: 0; left: 0; right: 0; z-index: 9999;
   background: linear-gradient(135deg, #0B1120, #0f1a30);
   border-top: 1px solid rgba(244,185,66,0.35);
-  padding: 10px 16px;
-  display: flex; align-items: center; justify-content: space-between;
+  padding: 8px 16px;
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
   box-shadow: 0 -4px 30px rgba(0,0,0,0.5);
   transition: transform 0.4s ease;
 }
 #mtag-bar.hidden { transform: translateY(100%); }
-#mtag-bar-slides { flex: 1; overflow: hidden; height: 40px; position: relative; }
+#mtag-bar-meta {
+  display: flex; flex-direction: column; align-items: flex-start;
+  gap: 2px; flex-shrink: 0;
+}
+#mtag-bar-label {
+  font-size: 0.6rem; color: #475569; font-family: 'Inter', sans-serif;
+  letter-spacing: 0.06em; text-transform: uppercase;
+}
+#mtag-bar-slides { flex: 1; overflow: hidden; height: 38px; position: relative; }
 .mtag-slide {
   position: absolute; inset: 0;
-  display: flex; align-items: center; gap: 12px;
-  opacity: 0; transform: translateY(12px);
+  display: flex; align-items: center; gap: 10px;
+  opacity: 0; transform: translateY(10px);
   transition: opacity 0.5s ease, transform 0.5s ease;
   pointer-events: none;
 }
-.mtag-slide.active {
-  opacity: 1; transform: translateY(0);
-  pointer-events: auto;
-}
-.mtag-slide-icon { font-size: 1.2rem; flex-shrink: 0; }
+.mtag-slide.active { opacity: 1; transform: translateY(0); pointer-events: auto; }
+.mtag-slide-icon { font-size: 1.1rem; flex-shrink: 0; }
 .mtag-slide-text {
-  color: #CBD5E1; font-size: 0.85rem; font-family: 'Inter', sans-serif;
+  color: #CBD5E1; font-size: 0.82rem; font-family: 'Inter', sans-serif;
   flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 .mtag-slide-text strong { color: #F4B942; }
 .mtag-slide-btn {
   background: linear-gradient(135deg, #F4B942, #E8A028);
   color: #000; border: none; cursor: pointer;
-  padding: 6px 16px; border-radius: 7px;
-  font-size: 0.8rem; font-weight: 700; font-family: 'Inter', sans-serif;
+  padding: 6px 14px; border-radius: 7px;
+  font-size: 0.78rem; font-weight: 700; font-family: 'Inter', sans-serif;
   white-space: nowrap; flex-shrink: 0;
   transition: transform 0.2s, box-shadow 0.2s;
 }
-.mtag-slide-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 15px rgba(244,185,66,0.5); }
+.mtag-slide-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 14px rgba(244,185,66,0.5); }
 #mtag-bar-close {
-  background: none; border: none; color: #64748B; cursor: pointer;
-  font-size: 1.1rem; padding: 4px 6px; margin-left: 12px; flex-shrink: 0;
-  transition: color 0.2s;
+  background: none; border: none; color: #475569; cursor: pointer;
+  font-size: 1rem; padding: 4px 6px; flex-shrink: 0;
+  transition: color 0.2s; line-height: 1;
 }
 #mtag-bar-close:hover { color: #94A3B8; }
 
-/* ── Side Badge ── */
-#mtag-side {
-  position: fixed; right: 0; top: 50%; transform: translateY(-50%);
-  z-index: 9998; display: flex; flex-direction: column; align-items: flex-end;
+/* ── Shared side widget base ── */
+.mtag-side-widget {
+  position: fixed; top: 50%; transform: translateY(-50%);
+  z-index: 9998;
+  display: flex; align-items: center;
 }
-#mtag-side-tab {
-  writing-mode: vertical-rl; text-orientation: mixed;
-  background: linear-gradient(180deg, #F4B942, #E8A028);
-  color: #000; font-size: 0.7rem; font-weight: 700; font-family: 'Inter', sans-serif;
-  padding: 14px 6px; cursor: pointer; border-radius: 8px 0 0 8px;
-  letter-spacing: 0.05em; box-shadow: -2px 0 20px rgba(244,185,66,0.3);
-  transition: padding 0.2s;
+
+/* ── RIGHT side widget ── */
+#mtag-side-r {
+  right: 0;
+  flex-direction: row-reverse;
 }
-#mtag-side-tab:hover { padding: 14px 10px; }
-#mtag-side-panel {
-  position: absolute; right: 0; top: 0;
-  width: 180px; background: #0B1120;
-  border: 1px solid rgba(244,185,66,0.3); border-right: none;
+#mtag-side-r .mtag-side-tab {
+  border-radius: 8px 0 0 8px;
+  box-shadow: -2px 0 16px rgba(244,185,66,0.25);
+}
+#mtag-side-r .mtag-side-panel {
+  right: 26px; left: auto;
+  border-right: none;
   border-radius: 12px 0 0 12px;
-  padding: 14px; overflow: hidden;
-  max-height: 0; opacity: 0;
-  transition: max-height 0.4s ease, opacity 0.4s ease, padding 0.4s ease;
-  padding-top: 0; padding-bottom: 0;
+  transform-origin: right center;
 }
-#mtag-side-panel.open {
-  max-height: 200px; opacity: 1;
-  padding: 14px; padding-right: 4px;
+
+/* ── LEFT side widget ── */
+#mtag-side-l {
+  left: 0;
+  flex-direction: row;
+}
+#mtag-side-l .mtag-side-tab {
+  border-radius: 0 8px 8px 0;
+  box-shadow: 2px 0 16px rgba(6,182,212,0.25);
+  background: linear-gradient(180deg, #06B6D4, #0284C7);
+}
+#mtag-side-l .mtag-side-panel {
+  left: 26px; right: auto;
+  border-left: none;
+  border-radius: 0 12px 12px 0;
+  border-color: rgba(6,182,212,0.3);
+  transform-origin: left center;
+}
+#mtag-side-l .mtag-side-btn {
+  background: linear-gradient(135deg, #06B6D4, #0284C7);
+}
+#mtag-side-l .mtag-side-text strong { color: #06B6D4; }
+#mtag-side-l .mtag-ad-chip {
+  background: rgba(6,182,212,0.15);
+  border-color: rgba(6,182,212,0.4);
+  color: #06B6D4;
+}
+
+/* ── Side tab (shared) ── */
+.mtag-side-tab {
+  writing-mode: vertical-rl;
+  background: linear-gradient(180deg, #F4B942, #E8A028);
+  color: #000; font-size: 0.62rem; font-weight: 800;
+  font-family: 'Inter', sans-serif;
+  padding: 12px 6px; cursor: pointer;
+  letter-spacing: 0.07em; flex-shrink: 0;
+  transition: padding 0.2s;
+  user-select: none;
+}
+.mtag-side-tab:hover { padding: 12px 9px; }
+
+/* ── Side panel (shared) ── */
+.mtag-side-panel {
+  position: absolute; top: 0;
+  width: 110px; background: #0B1120;
+  border: 1px solid rgba(244,185,66,0.3);
+  padding: 10px; overflow: hidden;
+  max-width: 0; opacity: 0; padding-left: 0; padding-right: 0;
+  transition: max-width 0.4s ease, opacity 0.4s ease, padding 0.4s ease;
+  white-space: normal;
+}
+.mtag-side-panel.open {
+  max-width: 110px; opacity: 1;
+  padding: 10px;
+}
+.mtag-side-panel-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 8px;
+}
+.mtag-side-panel-title {
+  font-size: 0.65rem; color: #475569;
+  font-family: 'Inter', sans-serif; letter-spacing: 0.06em; text-transform: uppercase;
 }
 .mtag-side-slide { display: none; }
 .mtag-side-slide.active { display: block; }
-.mtag-side-emoji { font-size: 1.5rem; text-align: center; margin-bottom: 6px; }
+.mtag-side-emoji { font-size: 1.4rem; text-align: center; margin-bottom: 5px; }
 .mtag-side-text {
-  color: #94A3B8; font-size: 0.75rem; line-height: 1.5;
-  font-family: 'Inter', sans-serif; margin-bottom: 10px; text-align: center;
+  color: #94A3B8; font-size: 0.73rem; line-height: 1.5;
+  font-family: 'Inter', sans-serif; margin-bottom: 9px; text-align: center;
 }
 .mtag-side-text strong { color: #F4B942; }
 .mtag-side-btn {
   width: 100%; background: linear-gradient(135deg, #F4B942, #E8A028);
   color: #000; border: none; cursor: pointer;
   padding: 7px; border-radius: 7px;
-  font-size: 0.75rem; font-weight: 700; font-family: 'Inter', sans-serif;
+  font-size: 0.72rem; font-weight: 700; font-family: 'Inter', sans-serif;
+  transition: opacity 0.2s;
 }
+.mtag-side-btn:hover { opacity: 0.9; }
 
-@media (max-width: 480px) {
-  #mtag-side { display: none; }
+@media (max-width: 768px) {
+  .mtag-side-widget { display: none; }
   .mtag-slide-text { font-size: 0.75rem; }
+}
+@media (max-width: 480px) {
+  #mtag-bar { padding: 7px 10px; }
+  #mtag-bar-meta { display: none; }
 }
 </style>
 
-<!-- Bottom Sticky Bar -->
+<!-- ── Bottom Sticky Bar ── -->
 <div id="mtag-bar">
+  <div id="mtag-bar-meta">
+    <span class="mtag-ad-chip">AD</span>
+    <span id="mtag-bar-label">Sponsored</span>
+  </div>
   <div id="mtag-bar-slides">
-    <div class="mtag-slide active" data-zone="https://omg10.com/4/11211141">
+    <div class="mtag-slide active">
       <span class="mtag-slide-icon">🔥</span>
       <span class="mtag-slide-text"><strong>Hot Deal:</strong> Exclusive offers handpicked for you — grab it before it's gone!</span>
       <button class="mtag-slide-btn" onclick="mtagOpen('https://omg10.com/4/11211141')">Claim Now →</button>
     </div>
-    <div class="mtag-slide" data-zone="https://omg10.com/4/11211143">
+    <div class="mtag-slide">
       <span class="mtag-slide-icon">💰</span>
-      <span class="mtag-slide-text"><strong>Earn Online:</strong> Top earning opportunities available — start today for free!</span>
+      <span class="mtag-slide-text"><strong>Earn Online:</strong> Top opportunities available — start today for free!</span>
       <button class="mtag-slide-btn" onclick="mtagOpen('https://omg10.com/4/11211143')">Learn More →</button>
     </div>
-    <div class="mtag-slide" data-zone="https://omg10.com/4/11211144">
+    <div class="mtag-slide">
       <span class="mtag-slide-icon">⚡</span>
       <span class="mtag-slide-text"><strong>Special Offer:</strong> Limited time deal just for visitors — don't miss out!</span>
       <button class="mtag-slide-btn" onclick="mtagOpen('https://omg10.com/4/11211144')">See Offer →</button>
@@ -2349,9 +2434,14 @@ window.addEventListener('load', () => {
   <button id="mtag-bar-close" title="Close">✕</button>
 </div>
 
-<!-- Side Badge -->
-<div id="mtag-side">
-  <div id="mtag-side-panel">
+<!-- ── Right Side Widget ── -->
+<div id="mtag-side-r" class="mtag-side-widget">
+  <div class="mtag-side-tab" onclick="mtagToggle('r')">AD</div>
+  <div class="mtag-side-panel" id="mtag-panel-r">
+    <div class="mtag-side-panel-header">
+      <span class="mtag-side-panel-title">Sponsored</span>
+      <span class="mtag-ad-chip">AD</span>
+    </div>
     <div class="mtag-side-slide active">
       <div class="mtag-side-emoji">🎁</div>
       <div class="mtag-side-text"><strong>Free Gift</strong> waiting for you — claim your reward now!</div>
@@ -2359,7 +2449,7 @@ window.addEventListener('load', () => {
     </div>
     <div class="mtag-side-slide">
       <div class="mtag-side-emoji">📈</div>
-      <div class="mtag-side-text"><strong>Grow your income</strong> with top-rated online programs!</div>
+      <div class="mtag-side-text"><strong>Grow income</strong> with top-rated online programs today!</div>
       <button class="mtag-side-btn" onclick="mtagOpen('https://omg10.com/4/11211143')">Explore →</button>
     </div>
     <div class="mtag-side-slide">
@@ -2368,7 +2458,32 @@ window.addEventListener('load', () => {
       <button class="mtag-side-btn" onclick="mtagOpen('https://omg10.com/4/11211144')">Shop Now →</button>
     </div>
   </div>
-  <div id="mtag-side-tab" onclick="mtagToggleSide()">ADS</div>
+</div>
+
+<!-- ── Left Side Widget ── -->
+<div id="mtag-side-l" class="mtag-side-widget">
+  <div class="mtag-side-tab" onclick="mtagToggle('l')" style="writing-mode:vertical-lr;transform:rotate(180deg)">AD</div>
+  <div class="mtag-side-panel" id="mtag-panel-l">
+    <div class="mtag-side-panel-header">
+      <span class="mtag-side-panel-title">Sponsored</span>
+      <span class="mtag-ad-chip">AD</span>
+    </div>
+    <div class="mtag-side-slide active">
+      <div class="mtag-side-emoji">🚀</div>
+      <div class="mtag-side-text"><strong>Level Up!</strong> Discover tools that boost your productivity fast.</div>
+      <button class="mtag-side-btn" onclick="mtagOpen('https://omg10.com/4/11211141')">Try Now →</button>
+    </div>
+    <div class="mtag-side-slide">
+      <div class="mtag-side-emoji">💡</div>
+      <div class="mtag-side-text"><strong>Smart Deal:</strong> Save more with today's featured offers!</div>
+      <button class="mtag-side-btn" onclick="mtagOpen('https://omg10.com/4/11211143')">View Deal →</button>
+    </div>
+    <div class="mtag-side-slide">
+      <div class="mtag-side-emoji">🏆</div>
+      <div class="mtag-side-text"><strong>Top Rated:</strong> #1 recommended app this week — check it out!</div>
+      <button class="mtag-side-btn" onclick="mtagOpen('https://omg10.com/4/11211144')">See It →</button>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -2381,44 +2496,49 @@ window.addEventListener('load', () => {
   // ── Bottom bar rotation ──
   var barSlides = document.querySelectorAll('#mtag-bar-slides .mtag-slide');
   var barIdx = 0;
-  function rotateBannerBar() {
+  setInterval(function() {
     barSlides[barIdx].classList.remove('active');
     barIdx = (barIdx + 1) % barSlides.length;
     barSlides[barIdx].classList.add('active');
-  }
-  setInterval(rotateBannerBar, 5000);
+  }, 5000);
 
-  // Close button
   document.getElementById('mtag-bar-close').addEventListener('click', function() {
     document.getElementById('mtag-bar').classList.add('hidden');
-    // Reopen after 2 minutes
     setTimeout(function() {
       document.getElementById('mtag-bar').classList.remove('hidden');
     }, 2 * 60 * 1000);
   });
 
-  // ── Side panel rotation ──
-  var sideSlides = document.querySelectorAll('.mtag-side-slide');
-  var sideIdx = 0;
-  function rotateSide() {
-    sideSlides[sideIdx].classList.remove('active');
-    sideIdx = (sideIdx + 1) % sideSlides.length;
-    sideSlides[sideIdx].classList.add('active');
-  }
-  setInterval(rotateSide, 5000);
+  // ── Right side rotation ──
+  var rSlides = document.querySelectorAll('#mtag-panel-r .mtag-side-slide');
+  var rIdx = 0;
+  setInterval(function() {
+    rSlides[rIdx].classList.remove('active');
+    rIdx = (rIdx + 1) % rSlides.length;
+    rSlides[rIdx].classList.add('active');
+  }, 5000);
 
-  // Side panel toggle
-  var sidePanelOpen = false;
-  function mtagToggleSide() {
-    sidePanelOpen = !sidePanelOpen;
-    document.getElementById('mtag-side-panel').classList.toggle('open', sidePanelOpen);
-  }
-  window.mtagToggleSide = mtagToggleSide;
+  // ── Left side rotation ──
+  var lSlides = document.querySelectorAll('#mtag-panel-l .mtag-side-slide');
+  var lIdx = 0;
+  setInterval(function() {
+    lSlides[lIdx].classList.remove('active');
+    lIdx = (lIdx + 1) % lSlides.length;
+    lSlides[lIdx].classList.add('active');
+  }, 5000);
 
-  // Auto-open side panel after 8 seconds
+  // ── Toggle panels ──
+  var panelState = { r: false, l: false };
+  function mtagToggle(side) {
+    panelState[side] = !panelState[side];
+    document.getElementById('mtag-panel-' + side).classList.toggle('open', panelState[side]);
+  }
+  window.mtagToggle = mtagToggle;
+
+  // Auto-open both panels after 8s
   setTimeout(function() {
-    sidePanelOpen = true;
-    document.getElementById('mtag-side-panel').classList.add('open');
+    mtagToggle('r');
+    mtagToggle('l');
   }, 8000);
 })();
 </script>
